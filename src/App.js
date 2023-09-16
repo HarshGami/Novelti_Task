@@ -11,20 +11,20 @@ function App() {
   const create = useSelector((state) => state.screen.create);
   const edit = useSelector((state) => state.screen.edit);
   const removeUser = useSelector((state) => state.screen.removeUser);
-  const [apiData, setApiData] = useState([])
+  const [apiData, setApiData] = useState([]);
 
-  const url = "https://restcountries.com/v3.1/all"
+  const url = "https://restcountries.com/v3.1/all";
   useEffect(() => {
-    let countryData=[];
+    let countryData = [];
     axios.get(url).then((response) => {
       let data = response.data;
-      for(let i=0;i<data.length;i++){
+      for (let i = 0; i < data.length; i++) {
         countryData.push(data[i].name.common);
       }
       countryData.sort();
       setApiData(countryData);
-    })
-  }, [])
+    });
+  }, []);
 
   // console.log(apiData)
 

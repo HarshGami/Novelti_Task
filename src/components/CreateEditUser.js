@@ -7,7 +7,7 @@ import { createNew, editUser } from "../features/user/userSlice";
 import { setCreate, setEdit } from "../features/screen/screenSlice";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-function CreateEditUser({apiData}) {
+function CreateEditUser({ apiData }) {
   const countryData = apiData;
   const [selected, setSelected] = useState(countryData[0]);
   const [query, setQuery] = useState("");
@@ -338,47 +338,49 @@ function CreateEditUser({apiData}) {
                                               Nothing found.
                                             </div>
                                           ) : (
-                                            filteredcountryData.map((person,index) => (
-                                              <Combobox.Option
-                                                key={index}
-                                                className={({ active }) =>
-                                                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                    active
-                                                      ? "bg-teal-600 text-white"
-                                                      : "text-gray-900"
-                                                  }`
-                                                }
-                                                value={person}
-                                              >
-                                                {({ selected, active }) => (
-                                                  <>
-                                                    <span
-                                                      className={`block truncate ${
-                                                        selected
-                                                          ? "font-medium"
-                                                          : "font-normal"
-                                                      }`}
-                                                    >
-                                                      {person}
-                                                    </span>
-                                                    {selected ? (
+                                            filteredcountryData.map(
+                                              (person, index) => (
+                                                <Combobox.Option
+                                                  key={index}
+                                                  className={({ active }) =>
+                                                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                      active
+                                                        ? "bg-teal-600 text-white"
+                                                        : "text-gray-900"
+                                                    }`
+                                                  }
+                                                  value={person}
+                                                >
+                                                  {({ selected, active }) => (
+                                                    <>
                                                       <span
-                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                                          active
-                                                            ? "text-white"
-                                                            : "text-teal-600"
+                                                        className={`block truncate ${
+                                                          selected
+                                                            ? "font-medium"
+                                                            : "font-normal"
                                                         }`}
                                                       >
-                                                        <CheckIcon
-                                                          className="h-5 w-5"
-                                                          aria-hidden="true"
-                                                        />
+                                                        {person}
                                                       </span>
-                                                    ) : null}
-                                                  </>
-                                                )}
-                                              </Combobox.Option>
-                                            ))
+                                                      {selected ? (
+                                                        <span
+                                                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                            active
+                                                              ? "text-white"
+                                                              : "text-teal-600"
+                                                          }`}
+                                                        >
+                                                          <CheckIcon
+                                                            className="h-5 w-5"
+                                                            aria-hidden="true"
+                                                          />
+                                                        </span>
+                                                      ) : null}
+                                                    </>
+                                                  )}
+                                                </Combobox.Option>
+                                              )
+                                            )
                                           )}
                                         </Combobox.Options>
                                       </Transition>

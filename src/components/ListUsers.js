@@ -14,7 +14,7 @@ function ListUsers() {
 
   const viewUser = (e, index) => {
     e.preventDefault();
-    dispatch(setUserData({...users[index],id:index}));
+    dispatch(setUserData({ ...users[index], id: index }));
     dispatch(setView(true));
   };
 
@@ -25,13 +25,13 @@ function ListUsers() {
 
   const editUser = (e, index) => {
     e.preventDefault();
-    dispatch(setUserData({...users[index],id:index}));
+    dispatch(setUserData({ ...users[index], id: index }));
     dispatch(setEdit(true));
   };
 
   const deleteUser = (e, index) => {
     e.preventDefault();
-    dispatch(setUserData({...users[index],id:index}));
+    dispatch(setUserData({ ...users[index], id: index }));
     dispatch(setRemoveUser(true));
   };
 
