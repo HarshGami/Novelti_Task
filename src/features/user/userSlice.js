@@ -9,15 +9,24 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     createNew: (state, action) => {
-      let users = JSON.stringify([...state.users, action.payload.user]);
+      let users = JSON.stringify([
+        ...state.users,
+        { ...action.payload, id: state.users.length },
+      ]);
       localStorage.setItem("users", users);
       state.users = JSON.parse(localStorage.getItem("users"));
     },
     deleteUser: (state, action) => {
-      let oldstate = state.users;
+      state.users.splice(action.payload.id, 1);
+      let users = JSON.stringify(state.users);
+      localStorage.setItem("users", users);
+      state.users = JSON.parse(localStorage.getItem("users"));
     },
     editUser: (state, action) => {
-      let oldstate = state.users;
+      state.users[action.payload.id] = action.payload;
+      let users = JSON.stringify(state.users);
+      localStorage.setItem("users", users);
+      state.users = JSON.parse(localStorage.getItem("users"));
     },
   },
 });

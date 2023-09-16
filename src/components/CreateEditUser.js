@@ -1,37 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { Fragment } from "react";
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, Transition, Combobox } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { useDispatch } from "react-redux";
-import { createNew, editUser, deleteUser } from "../features/user/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { createNew, editUser } from "../features/user/userSlice";
+import { setCreate, setEdit } from "../features/screen/screenSlice";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-function CreateEditUser({
-  userData,
-  setUserData,
-  edit,
-  setEdit,
-  create,
-  setCreate,
-}) {
+function CreateEditUser({apiData}) {
+  const countryData = apiData;
+  const [selected, setSelected] = useState(countryData[0]);
+  const [query, setQuery] = useState("");
+
+  const filteredcountryData =
+    query === ""
+      ? countryData
+      : countryData.filter((person) =>
+          person
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(query.toLowerCase().replace(/\s+/g, ""))
+        );
+
+  const userData = useSelector((state) => state.screen.userData);
+  const create = useSelector((state) => state.screen.create);
+
   const [open, setOpen] = useState(true);
   const [user, setUser] = useState(userData);
-  const dispatch = useDispatch();
 
-  // useEffect(()=>{
-  //   if(edit===false){
-  //     setUserData({});
-  //   }
-  // },[create,open,edit])
+  const dispatch = useDispatch();
 
   const close = () => {
     setOpen(false);
-    setEdit(false);
-    setCreate(false);
+    dispatch(setEdit(false));
+    dispatch(setCreate(false));
   };
 
   const createUser = (e) => {
     e.preventDefault();
-    dispatch(createNew({ user }));
+    dispatch(createNew(user));
+    close();
+  };
+
+  const editExited = (e) => {
+    e.preventDefault();
+    dispatch(editUser(user));
     close();
   };
 
@@ -66,7 +79,7 @@ function CreateEditUser({
                   <button
                     type="button"
                     className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                    onClick={() => close()}
+                    onClick={(e) => close()}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -291,19 +304,86 @@ function CreateEditUser({
                                   >
                                     Country
                                   </label>
-                                  <div className="mt-2">
-                                    <select
-                                      id="country"
-                                      name="country"
-                                      autoComplete="country"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-base sm:leading-6"
-                                    >
-                                      <option>{user.country}</option>
-                                      <option>United States</option>
-                                      <option>Canada</option>
-                                      <option>Mexico</option>
-                                    </select>
-                                  </div>
+                                  <Combobox
+                                    value={selected}
+                                    onChange={setSelected}
+                                  >
+                                    <div className="relative mt-2">
+                                      <div className="relative w-full border-2 cursor-default overflow-hidden rounded-lg bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                                        <Combobox.Input
+                                          className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                                          displayValue={""}
+                                          onChange={(event) =>
+                                            setQuery(event.target.value)
+                                          }
+                                        />
+                                        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                          <ChevronUpDownIcon
+                                            className="h-5 w-5 text-gray-400"
+                                            aria-hidden="true"
+                                          />
+                                        </Combobox.Button>
+                                      </div>
+                                      <Transition
+                                        as={Fragment}
+                                        leave="transition ease-in duration-100"
+                                        leaveFrom="opacity-100"
+                                        leaveTo="opacity-0"
+                                        afterLeave={() => setQuery("")}
+                                      >
+                                        <Combobox.Options className="absolute mt-1 max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                          {filteredcountryData.length === 0 &&
+                                          query !== "" ? (
+                                            <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                              Nothing found.
+                                            </div>
+                                          ) : (
+                                            filteredcountryData.map((person,index) => (
+                                              <Combobox.Option
+                                                key={index}
+                                                className={({ active }) =>
+                                                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                    active
+                                                      ? "bg-teal-600 text-white"
+                                                      : "text-gray-900"
+                                                  }`
+                                                }
+                                                value={person}
+                                              >
+                                                {({ selected, active }) => (
+                                                  <>
+                                                    <span
+                                                      className={`block truncate ${
+                                                        selected
+                                                          ? "font-medium"
+                                                          : "font-normal"
+                                                      }`}
+                                                    >
+                                                      {person}
+                                                    </span>
+                                                    {selected ? (
+                                                      <span
+                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                          active
+                                                            ? "text-white"
+                                                            : "text-teal-600"
+                                                        }`}
+                                                      >
+                                                        <CheckIcon
+                                                          className="h-5 w-5"
+                                                          aria-hidden="true"
+                                                        />
+                                                      </span>
+                                                    ) : null}
+                                                  </>
+                                                )}
+                                              </Combobox.Option>
+                                            ))
+                                          )}
+                                        </Combobox.Options>
+                                      </Transition>
+                                    </div>
+                                  </Combobox>
                                 </div>
 
                                 <div className="sm:col-span-2">
@@ -335,20 +415,21 @@ function CreateEditUser({
                           </div>
 
                           <div className="mt-6 flex items-center justify-end gap-x-6">
-                            {edit ? (
-                              <button
-                                type="submit"
-                                className="rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                              >
-                                Edit User
-                              </button>
-                            ) : (
+                            {create ? (
                               <button
                                 type="submit"
                                 onClick={(e) => createUser(e)}
                                 className="rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                               >
                                 Create User
+                              </button>
+                            ) : (
+                              <button
+                                type="submit"
+                                onClick={(e) => editExited(e)}
+                                className="rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                              >
+                                Edit User
                               </button>
                             )}
                           </div>

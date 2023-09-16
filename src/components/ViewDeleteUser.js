@@ -2,21 +2,28 @@ import React, { useState } from "react";
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useSelector, useDispatch } from "react-redux";
+import { setView, setRemoveUser } from "../features/screen/screenSlice";
+import { deleteUser } from "../features/user/userSlice";
 
-function ViewDeleteUser({
-  userData,
-  view,
-  setView,
-  deleteUser,
-  setDeleteUser,
-}) {
+function ViewDeleteUser() {
+  const userData = useSelector((state) => state.screen.userData);
+  const view = useSelector((state) => state.screen.view);
+
   const [open, setOpen] = useState(true);
-  const [user, setUser] = useState(userData);
+
+  const dispatch = useDispatch();
 
   const close = () => {
     setOpen(false);
-    setView(false);
-    setDeleteUser(false);
+    dispatch(setView(false));
+    dispatch(setRemoveUser(false));
+  };
+
+  const deleteExited = (e) => {
+    e.preventDefault();
+    dispatch(deleteUser(userData));
+    close();
   };
 
   return (
@@ -50,7 +57,7 @@ function ViewDeleteUser({
                   <button
                     type="button"
                     className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
-                    onClick={() => close()}
+                    onClick={(e) => close()}
                   >
                     <span className="sr-only">Close</span>
                     <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -78,7 +85,7 @@ function ViewDeleteUser({
                                     First name
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.firstName}
+                                    {userData.firstName}
                                   </dd>
                                 </div>
 
@@ -87,7 +94,7 @@ function ViewDeleteUser({
                                     Last name
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.lastName}
+                                    {userData.lastName}
                                   </dd>
                                 </div>
 
@@ -96,7 +103,7 @@ function ViewDeleteUser({
                                     Email Address
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.email}
+                                    {userData.email}
                                   </dd>
                                 </div>
 
@@ -105,7 +112,7 @@ function ViewDeleteUser({
                                     Mobile
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.mobile}
+                                    {userData.mobile}
                                   </dd>
                                 </div>
 
@@ -114,7 +121,7 @@ function ViewDeleteUser({
                                     Address 1
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.address1}
+                                    {userData.address1}
                                   </dd>
                                 </div>
 
@@ -123,7 +130,7 @@ function ViewDeleteUser({
                                     Address 2
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.address2}
+                                    {userData.address2}
                                   </dd>
                                 </div>
 
@@ -132,7 +139,7 @@ function ViewDeleteUser({
                                     State
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.state}
+                                    {userData.state}
                                   </dd>
                                 </div>
 
@@ -141,7 +148,7 @@ function ViewDeleteUser({
                                     Country
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.country}
+                                    {userData.country}
                                   </dd>
                                 </div>
 
@@ -150,7 +157,7 @@ function ViewDeleteUser({
                                     ZIP / Postal code
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {user.pinCode}
+                                    {userData.pinCode}
                                   </dd>
                                 </div>
                               </div>
@@ -169,7 +176,7 @@ function ViewDeleteUser({
                             ) : (
                               <button
                                 type="reset"
-                                onClick={(e) => close()}
+                                onClick={(e) => deleteExited(e)}
                                 className="rounded-md bg-red-600 px-5 py-2 text-base font-semibold text-white shadow-sm"
                               >
                                 Delete User

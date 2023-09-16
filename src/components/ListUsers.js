@@ -1,36 +1,38 @@
 import React from "react";
-import { useSelector } from "react-redux";
-
-function ListUsers({
-  setEdit,
-  setUserData,
+import { useSelector, useDispatch } from "react-redux";
+import {
   setView,
-  setDeleteUser,
   setCreate,
-}) {
+  setEdit,
+  setRemoveUser,
+  setUserData,
+} from "../features/screen/screenSlice";
+
+function ListUsers() {
   const users = useSelector((state) => state.user.users);
+  const dispatch = useDispatch();
 
   const viewUser = (e, index) => {
     e.preventDefault();
-    setUserData(users[index]);
-    setView(true);
+    dispatch(setUserData({...users[index],id:index}));
+    dispatch(setView(true));
   };
 
   const createUser = (e) => {
     e.preventDefault();
-    setCreate(true);
+    dispatch(setCreate(true));
   };
 
   const editUser = (e, index) => {
     e.preventDefault();
-    setUserData(users[index]);
-    setEdit(true);
+    dispatch(setUserData({...users[index],id:index}));
+    dispatch(setEdit(true));
   };
 
   const deleteUser = (e, index) => {
     e.preventDefault();
-    setUserData(users[index]);
-    setDeleteUser(true);
+    dispatch(setUserData({...users[index],id:index}));
+    dispatch(setRemoveUser(true));
   };
 
   return (
