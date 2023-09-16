@@ -6,29 +6,57 @@ import { useSelector, useDispatch } from "react-redux";
 import { createNew, editUser } from "../features/user/userSlice";
 import { setCreate, setEdit } from "../features/screen/screenSlice";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Country, State, City } from "country-state-city";
 
-function CreateEditUser({ apiData }) {
-  const countryData = apiData;
-  const [selected, setSelected] = useState(countryData[0]);
-  const [query, setQuery] = useState("");
-
-  const filteredcountryData =
-    query === ""
-      ? countryData
-      : countryData.filter((person) =>
-          person
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, ""))
-        );
-
+function CreateEditUser() {
   const userData = useSelector((state) => state.screen.userData);
   const create = useSelector((state) => state.screen.create);
+  const dispatch = useDispatch();
+
+  const countryData = Country.getAllCountries();
+  const allStateData = State.getAllStates();
 
   const [open, setOpen] = useState(true);
   const [user, setUser] = useState(userData);
+  const [selectedCountry, setSelectedCountry] = useState(
+    userData.country || { name: "", code: "" }
+  );
+  const [selectedState, setSelectedState] = useState(userData.state || "");
+  const [countryQuery, setCountryQuery] = useState("");
+  const [stateQuery, setStateQuery] = useState("");
+  const [stateData,setStateData] = useState([]);
+  
+  useEffect(() => {
+    if (selectedCountry.code !== "") {
+      let temp=[];
+      for (let i = 0; i < allStateData.length; i++) {
+        if(allStateData[i].countryCode===selectedCountry.code){
+          temp.push(allStateData[i]);
+        }
+      }
+      setStateData(temp);
+    }
+  });
 
-  const dispatch = useDispatch();
+  const filteredcountryData =
+    countryQuery === ""
+      ? countryData
+      : countryData.filter((country) =>
+          country.name
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(countryQuery.toLowerCase().replace(/\s+/g, ""))
+        );
+
+  const filteredStateData =
+    stateQuery === ""
+      ? stateData
+      : stateData.filter((state) =>
+          state.name
+            .toLowerCase()
+            .replace(/\s+/g, "")
+            .includes(stateQuery.toLowerCase().replace(/\s+/g, ""))
+        );
 
   const close = () => {
     setOpen(false);
@@ -38,13 +66,17 @@ function CreateEditUser({ apiData }) {
 
   const createUser = (e) => {
     e.preventDefault();
-    dispatch(createNew(user));
+    dispatch(
+      createNew({ ...user, state: selectedState, country: selectedCountry })
+    );
     close();
   };
 
   const editExited = (e) => {
     e.preventDefault();
-    dispatch(editUser(user));
+    dispatch(
+      editUser({ ...user, state: selectedState, country: selectedCountry })
+    );
     close();
   };
 
@@ -121,7 +153,7 @@ function CreateEditUser({ apiData }) {
                                           firstName: e.target.value,
                                         })
                                       }
-                                      autoComplete="given-name"
+                                      autoComplete="on"
                                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
                                   </div>
@@ -146,7 +178,7 @@ function CreateEditUser({ apiData }) {
                                           lastName: e.target.value,
                                         })
                                       }
-                                      autoComplete="family-name"
+                                      autoComplete="on"
                                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
                                   </div>
@@ -172,7 +204,7 @@ function CreateEditUser({ apiData }) {
                                             email: e.target.value,
                                           })
                                         }
-                                        autoComplete="email"
+                                        autoComplete="on"
                                         className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                       />
                                     </div>
@@ -189,7 +221,7 @@ function CreateEditUser({ apiData }) {
                                             email: e.target.value,
                                           })
                                         }
-                                        autoComplete="email"
+                                        autoComplete="on"
                                         className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                         disabled
                                       />
@@ -216,7 +248,7 @@ function CreateEditUser({ apiData }) {
                                           mobile: e.target.value,
                                         })
                                       }
-                                      autoComplete="mobile"
+                                      autoComplete="on"
                                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
                                   </div>
@@ -241,7 +273,7 @@ function CreateEditUser({ apiData }) {
                                           address1: e.target.value,
                                         })
                                       }
-                                      autoComplete="address-1"
+                                      autoComplete="on"
                                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
                                   </div>
@@ -266,7 +298,7 @@ function CreateEditUser({ apiData }) {
                                           address2: e.target.value,
                                         })
                                       }
-                                      autoComplete="address-2"
+                                      autoComplete="on"
                                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
                                   </div>
@@ -279,22 +311,104 @@ function CreateEditUser({ apiData }) {
                                   >
                                     State
                                   </label>
-                                  <div className="mt-2">
-                                    <input
-                                      type="text"
-                                      name="region"
-                                      id="region"
-                                      value={user.state}
-                                      onChange={(e) =>
-                                        setUser({
-                                          ...user,
-                                          state: e.target.value,
-                                        })
-                                      }
-                                      autoComplete="address-level1"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
-                                    />
-                                  </div>
+
+                                  {selectedCountry.name !== "" ? (
+                                    <Combobox
+                                      value={selectedState.name}
+                                      onChange={setSelectedState}
+                                    >
+                                      <div className="relative mt-2">
+                                        <div className="relative w-full border-2 cursor-default overflow-hidden rounded-lg bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+                                          <Combobox.Input
+                                            className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+                                            displayValue={selectedState.name}
+                                            onChange={(event) =>
+                                              setStateQuery(event.target.value)
+                                            }
+                                          />
+                                          <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+                                            <ChevronUpDownIcon
+                                              className="h-5 w-5 text-gray-400"
+                                              aria-hidden="true"
+                                            />
+                                          </Combobox.Button>
+                                        </div>
+                                        <Transition
+                                          as={Fragment}
+                                          leave="transition ease-in duration-200"
+                                          leaveFrom="opacity-100"
+                                          leaveTo="opacity-0"
+                                          afterLeave={() => setStateQuery("")}
+                                        >
+                                          <Combobox.Options className="z-20 absolute mt-1 max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                                            {filteredStateData.length === 0 &&
+                                            stateQuery !== "" ? (
+                                              <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
+                                                Nothing found.
+                                              </div>
+                                            ) : (
+                                              filteredStateData.map(
+                                                (state, index) => (
+                                                  <Combobox.Option
+                                                    key={index}
+                                                    className={({ active }) =>
+                                                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                                                        active
+                                                          ? "bg-teal-600 text-white"
+                                                          : "text-gray-900"
+                                                      }`
+                                                    }
+                                                    value={{name:state.name,code:state.countryCode}}
+                                                  >
+                                                    {({
+                                                      selectedState,
+                                                      active,
+                                                    }) => (
+                                                      <>
+                                                        <span
+                                                          className={`block truncate ${
+                                                            selectedState
+                                                              ? "font-medium"
+                                                              : "font-normal"
+                                                          }`}
+                                                        >
+                                                          {state.name}
+                                                        </span>
+                                                        {selectedState ? (
+                                                          <span
+                                                            className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
+                                                              active
+                                                                ? "text-white"
+                                                                : "text-teal-600"
+                                                            }`}
+                                                          >
+                                                            <CheckIcon
+                                                              className="h-5 w-5"
+                                                              aria-hidden="true"
+                                                            />
+                                                          </span>
+                                                        ) : null}
+                                                      </>
+                                                    )}
+                                                  </Combobox.Option>
+                                                )
+                                              )
+                                            )}
+                                          </Combobox.Options>
+                                        </Transition>
+                                      </div>
+                                    </Combobox>
+                                  ) : (
+                                    <div className="mt-2">
+                                      <input
+                                        type="text"
+                                        name="address-2"
+                                        id="address-2"
+                                        disabled
+                                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                      />
+                                    </div>
+                                  )}
                                 </div>
 
                                 <div className="sm:col-span-2">
@@ -305,16 +419,16 @@ function CreateEditUser({ apiData }) {
                                     Country
                                   </label>
                                   <Combobox
-                                    value={selected}
-                                    onChange={setSelected}
+                                    value={selectedCountry.name}
+                                    onChange={setSelectedCountry}
                                   >
                                     <div className="relative mt-2">
                                       <div className="relative w-full border-2 cursor-default overflow-hidden rounded-lg bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
                                         <Combobox.Input
                                           className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
-                                          displayValue={""}
+                                          displayValue={selectedCountry.name}
                                           onChange={(event) =>
-                                            setQuery(event.target.value)
+                                            setCountryQuery(event.target.value)
                                           }
                                         />
                                         <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
@@ -326,20 +440,20 @@ function CreateEditUser({ apiData }) {
                                       </div>
                                       <Transition
                                         as={Fragment}
-                                        leave="transition ease-in duration-100"
+                                        leave="transition ease-in duration-200"
                                         leaveFrom="opacity-100"
                                         leaveTo="opacity-0"
-                                        afterLeave={() => setQuery("")}
+                                        afterLeave={() => setCountryQuery("")}
                                       >
                                         <Combobox.Options className="absolute mt-1 max-h-28 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                                           {filteredcountryData.length === 0 &&
-                                          query !== "" ? (
+                                          countryQuery !== "" ? (
                                             <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
                                               Nothing found.
                                             </div>
                                           ) : (
                                             filteredcountryData.map(
-                                              (person, index) => (
+                                              (country, index) => (
                                                 <Combobox.Option
                                                   key={index}
                                                   className={({ active }) =>
@@ -349,20 +463,26 @@ function CreateEditUser({ apiData }) {
                                                         : "text-gray-900"
                                                     }`
                                                   }
-                                                  value={person}
+                                                  value={{
+                                                    name: country.name,
+                                                    code: country.isoCode,
+                                                  }}
                                                 >
-                                                  {({ selected, active }) => (
+                                                  {({
+                                                    selectedCountry,
+                                                    active,
+                                                  }) => (
                                                     <>
                                                       <span
                                                         className={`block truncate ${
-                                                          selected
+                                                          selectedCountry
                                                             ? "font-medium"
                                                             : "font-normal"
                                                         }`}
                                                       >
-                                                        {person}
+                                                        {country.name}
                                                       </span>
-                                                      {selected ? (
+                                                      {selectedCountry ? (
                                                         <span
                                                           className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                                                             active
@@ -407,7 +527,7 @@ function CreateEditUser({ apiData }) {
                                           pinCode: e.target.value,
                                         })
                                       }
-                                      autoComplete="postal-code"
+                                      autoComplete="on"
                                       className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
                                   </div>

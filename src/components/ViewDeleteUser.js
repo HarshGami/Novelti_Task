@@ -139,7 +139,7 @@ function ViewDeleteUser() {
                                     State
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {userData.state}
+                                    {userData.state.name}
                                   </dd>
                                 </div>
 
@@ -148,7 +148,7 @@ function ViewDeleteUser() {
                                     Country
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {userData.country}
+                                    {userData.country.name}
                                   </dd>
                                 </div>
 

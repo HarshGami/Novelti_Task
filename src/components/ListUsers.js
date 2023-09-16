@@ -61,7 +61,7 @@ function ListUsers() {
                   {user.firstName} {user.lastName}
                 </p>
                 <p className="truncate text-sm leading-5 text-gray-500">
-                  {user.state},{user.country}
+                  {user.state.name},{user.country.name}
                 </p>
               </div>
             </div>
