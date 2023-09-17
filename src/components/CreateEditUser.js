@@ -23,16 +23,16 @@ function CreateEditUser() {
 
   const [open, setOpen] = useState(true);
   const [user, setUser] = useState(userData);
+  const [countryQuery, setCountryQuery] = useState("");
+  const [stateQuery, setStateQuery] = useState("");
+  const [stateData, setStateData] = useState([]);
+  const [mobileCode, setMobileCode] = useState(user.mobileCode || "IN");
   const [selectedCountry, setSelectedCountry] = useState(
     userData.country || { name: "", code: "" }
   );
   const [selectedState, setSelectedState] = useState(
     userData.state || { name: "", code: "" }
   );
-  const [countryQuery, setCountryQuery] = useState("");
-  const [stateQuery, setStateQuery] = useState("");
-  const [stateData, setStateData] = useState([]);
-  const [mobileCode, setMobileCode] = useState(user.mobileCode || "IN");
 
   useEffect(() => {
     if (selectedCountry.code !== "") {
@@ -272,7 +272,12 @@ function CreateEditUser() {
                                   </label>
                                   <div className="relative mt-2 flex flex-row flex-wrap">
                                     <div className="w-3/12 border-r-2 border-gray-200 border-2 rounded-md flex items-center text-gray-500 px-2.5 py-2">
-                                    <label htmlFor="country-code" className="sr-only">country-code</label>
+                                      <label
+                                        htmlFor="country-code"
+                                        className="sr-only"
+                                      >
+                                        country-code
+                                      </label>
                                       <select
                                         id="country-code"
                                         name="country-code"
@@ -620,7 +625,12 @@ function CreateEditUser() {
                               <button
                                 type="submit"
                                 onClick={(e) => createUser(e)}
-                                className={`rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:pointer-events-none group-invalid:opacity-30 ${selectedCountry.name==="" || selectedState.name==="" ? 'pointer-events-none opacity-30' : ''}`}
+                                className={`rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:pointer-events-none group-invalid:opacity-30 ${
+                                  selectedCountry.name === "" ||
+                                  selectedState.name === ""
+                                    ? "pointer-events-none opacity-30"
+                                    : ""
+                                }`}
                               >
                                 Create User
                               </button>
@@ -628,7 +638,12 @@ function CreateEditUser() {
                               <button
                                 type="submit"
                                 onClick={(e) => editExited(e)}
-                                className={`rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:pointer-events-none group-invalid:opacity-30 ${selectedCountry.name==="" || selectedState.name==="" ? 'pointer-events-none opacity-30' : ''}`}
+                                className={`rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:pointer-events-none group-invalid:opacity-30 ${
+                                  selectedCountry.name === "" ||
+                                  selectedState.name === ""
+                                    ? "pointer-events-none opacity-30"
+                                    : ""
+                                }`}
                               >
                                 Edit User
                               </button>

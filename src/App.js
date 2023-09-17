@@ -15,20 +15,8 @@ function App() {
     <>
       <NavBar />
       <ListUsers />
-      {edit || create ? (
-        <>
-          <CreateEditUser />
-        </>
-      ) : (
-        <></>
-      )}
-      {view || removeUser ? (
-        <>
-          <ViewDeleteUser />
-        </>
-      ) : (
-        <></>
-      )}
+      {edit || create ? <CreateEditUser /> : null}
+      {view || removeUser ? <ViewDeleteUser /> : null}
     </>
   );
 }
