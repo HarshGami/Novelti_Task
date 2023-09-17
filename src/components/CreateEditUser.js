@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { createNew, editUser } from "../features/user/userSlice";
 import { setCreate, setEdit } from "../features/screen/screenSlice";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { Country, State, City } from "country-state-city";
+import { Country, State } from "country-state-city";
 
 function CreateEditUser() {
   const userData = useSelector((state) => state.screen.userData);
@@ -15,28 +15,36 @@ function CreateEditUser() {
 
   const countryData = Country.getAllCountries();
   const allStateData = State.getAllStates();
+  let countryCode = [];
+  for (let i = 0; i < countryData.length; i++) {
+    countryCode.push(countryData[i].isoCode);
+  }
+  countryCode.sort();
 
   const [open, setOpen] = useState(true);
   const [user, setUser] = useState(userData);
   const [selectedCountry, setSelectedCountry] = useState(
     userData.country || { name: "", code: "" }
   );
-  const [selectedState, setSelectedState] = useState(userData.state || "");
+  const [selectedState, setSelectedState] = useState(
+    userData.state || { name: "", code: "" }
+  );
   const [countryQuery, setCountryQuery] = useState("");
   const [stateQuery, setStateQuery] = useState("");
-  const [stateData,setStateData] = useState([]);
-  
+  const [stateData, setStateData] = useState([]);
+  const [mobileCode, setMobileCode] = useState(user.mobileCode || "IN");
+
   useEffect(() => {
     if (selectedCountry.code !== "") {
-      let temp=[];
+      let temp = [];
       for (let i = 0; i < allStateData.length; i++) {
-        if(allStateData[i].countryCode===selectedCountry.code){
+        if (allStateData[i].countryCode === selectedCountry.code) {
           temp.push(allStateData[i]);
         }
       }
       setStateData(temp);
     }
-  });
+  }, [selectedCountry]);
 
   const filteredcountryData =
     countryQuery === ""
@@ -67,7 +75,12 @@ function CreateEditUser() {
   const createUser = (e) => {
     e.preventDefault();
     dispatch(
-      createNew({ ...user, state: selectedState, country: selectedCountry })
+      createNew({
+        ...user,
+        state: selectedState,
+        country: selectedCountry,
+        mobileCode,
+      })
     );
     close();
   };
@@ -75,7 +88,12 @@ function CreateEditUser() {
   const editExited = (e) => {
     e.preventDefault();
     dispatch(
-      editUser({ ...user, state: selectedState, country: selectedCountry })
+      editUser({
+        ...user,
+        state: selectedState,
+        country: selectedCountry,
+        mobileCode,
+      })
     );
     close();
   };
@@ -130,7 +148,7 @@ function CreateEditUser() {
                       )}
 
                       <section aria-labelledby="options-heading">
-                        <form>
+                        <form noValidate className="group">
                           <div className="space-y-12">
                             <div className="border-b border-gray-900/10 pb-6">
                               <div className="w-full mt-3 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -139,7 +157,7 @@ function CreateEditUser() {
                                     htmlFor="first-name"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    First name
+                                    First Name*
                                   </label>
                                   <div className="mt-2">
                                     <input
@@ -154,8 +172,14 @@ function CreateEditUser() {
                                         })
                                       }
                                       autoComplete="on"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                      required
+                                      pattern="[a-zA-Z]{5,}"
+                                      className="peer block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
+                                    <span className="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+                                      First name should have minimum 5
+                                      characters
+                                    </span>
                                   </div>
                                 </div>
 
@@ -164,7 +188,7 @@ function CreateEditUser() {
                                     htmlFor="last-name"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    Last name
+                                    Last Name*
                                   </label>
                                   <div className="mt-2">
                                     <input
@@ -179,8 +203,13 @@ function CreateEditUser() {
                                         })
                                       }
                                       autoComplete="on"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                      required
+                                      pattern="[a-zA-Z]{5,}"
+                                      className="peer block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
+                                    <span className="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+                                      Last name should have minimum 5 characters
+                                    </span>
                                   </div>
                                 </div>
 
@@ -189,7 +218,7 @@ function CreateEditUser() {
                                     htmlFor="email"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    Email address
+                                    Email address*
                                   </label>
                                   {create ? (
                                     <div className="mt-2">
@@ -205,8 +234,13 @@ function CreateEditUser() {
                                           })
                                         }
                                         autoComplete="on"
-                                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                        required
+                                        pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
+                                        className="peer block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                       />
+                                      <span className="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+                                        Please enter a valid email address
+                                      </span>
                                     </div>
                                   ) : (
                                     <div className="mt-2">
@@ -222,7 +256,7 @@ function CreateEditUser() {
                                           })
                                         }
                                         autoComplete="on"
-                                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                        className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6 invalid:[&:not(:placeholder-shown):not(:focus)]:border-red-500"
                                         disabled
                                       />
                                     </div>
@@ -234,13 +268,31 @@ function CreateEditUser() {
                                     htmlFor="mobile"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    Mobile
+                                    Mobile*
                                   </label>
-                                  <div className="mt-2">
+                                  <div className="relative mt-2 flex flex-row flex-wrap">
+                                    <div className="w-3/12 border-r-2 border-gray-200 border-2 rounded-md flex items-center text-gray-500 px-2.5 py-2">
+                                    <label htmlFor="country-code" className="sr-only">country-code</label>
+                                      <select
+                                        id="country-code"
+                                        name="country-code"
+                                        defaultValue={mobileCode}
+                                        onChange={(e) =>
+                                          setMobileCode(e.target.value)
+                                        }
+                                        className="block w-full focus:ring-blue-600 focus:border-blue-600"
+                                      >
+                                        {countryCode.map((code, index) => (
+                                          <option key={index} value={code}>
+                                            {code}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </div>
                                     <input
-                                      id="mobile"
-                                      name="mobile"
                                       type="tel"
+                                      id="mobiles"
+                                      name="mobile"
                                       value={user.mobile}
                                       onChange={(e) =>
                                         setUser({
@@ -249,8 +301,13 @@ function CreateEditUser() {
                                         })
                                       }
                                       autoComplete="on"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                      required
+                                      pattern="^\d{10}$"
+                                      className="peer py-2 px-4 border-gray-200 border-2 rounded-md block w-9/12 text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500"
                                     />
+                                    <span className="mt-2 hidden w-full text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+                                      Please enter a mobile number
+                                    </span>
                                   </div>
                                 </div>
 
@@ -259,7 +316,7 @@ function CreateEditUser() {
                                     htmlFor="address-1"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    Address 1
+                                    Address 1*
                                   </label>
                                   <div className="mt-2">
                                     <input
@@ -274,8 +331,13 @@ function CreateEditUser() {
                                         })
                                       }
                                       autoComplete="on"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                      required
+                                      pattern="^\S.*\S$|^.{1,2}$"
+                                      className="peer block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
+                                    <span className="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+                                      Address is required
+                                    </span>
                                   </div>
                                 </div>
 
@@ -284,7 +346,7 @@ function CreateEditUser() {
                                     htmlFor="address-2"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    Address 2
+                                    Address 2 (Optional)
                                   </label>
                                   <div className="mt-2">
                                     <input
@@ -309,7 +371,7 @@ function CreateEditUser() {
                                     htmlFor="region"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    State
+                                    State*
                                   </label>
 
                                   {selectedCountry.name !== "" ? (
@@ -358,7 +420,10 @@ function CreateEditUser() {
                                                           : "text-gray-900"
                                                       }`
                                                     }
-                                                    value={{name:state.name,code:state.countryCode}}
+                                                    value={{
+                                                      name: state.name,
+                                                      code: state.countryCode,
+                                                    }}
                                                   >
                                                     {({
                                                       selectedState,
@@ -404,9 +469,13 @@ function CreateEditUser() {
                                         type="text"
                                         name="address-2"
                                         id="address-2"
+                                        value={""}
                                         disabled
                                         className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                       />
+                                      <span className="mt-2 text-sm text-red-500">
+                                        Select country first
+                                      </span>
                                     </div>
                                   )}
                                 </div>
@@ -416,7 +485,7 @@ function CreateEditUser() {
                                     htmlFor="country"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    Country
+                                    Country*
                                   </label>
                                   <Combobox
                                     value={selectedCountry.name}
@@ -506,6 +575,11 @@ function CreateEditUser() {
                                       </Transition>
                                     </div>
                                   </Combobox>
+                                  {selectedCountry.name === "" ? (
+                                    <span className="mt-2 text-sm text-red-500">
+                                      Please select country
+                                    </span>
+                                  ) : null}
                                 </div>
 
                                 <div className="sm:col-span-2">
@@ -513,7 +587,7 @@ function CreateEditUser() {
                                     htmlFor="postal-code"
                                     className="block text-base font-medium leading-6 text-gray-900"
                                   >
-                                    ZIP / Postal code
+                                    ZIP / Postal code*
                                   </label>
                                   <div className="mt-2">
                                     <input
@@ -528,8 +602,13 @@ function CreateEditUser() {
                                         })
                                       }
                                       autoComplete="on"
-                                      className="block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
+                                      required
+                                      pattern="^\d{6}$"
+                                      className="peer block w-full rounded-md border-0 p-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-base sm:leading-6"
                                     />
+                                    <span className="mt-2 hidden text-sm text-red-500 peer-[&:not(:placeholder-shown):not(:focus):invalid]:block">
+                                      Please enter a valid zip code
+                                    </span>
                                   </div>
                                 </div>
                               </div>
@@ -541,7 +620,7 @@ function CreateEditUser() {
                               <button
                                 type="submit"
                                 onClick={(e) => createUser(e)}
-                                className="rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                className={`rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:pointer-events-none group-invalid:opacity-30 ${selectedCountry.name==="" || selectedState.name==="" ? 'pointer-events-none opacity-30' : ''}`}
                               >
                                 Create User
                               </button>
@@ -549,7 +628,7 @@ function CreateEditUser() {
                               <button
                                 type="submit"
                                 onClick={(e) => editExited(e)}
-                                className="rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                className={`rounded-md bg-indigo-600 px-5 py-2 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 group-invalid:pointer-events-none group-invalid:opacity-30 ${selectedCountry.name==="" || selectedState.name==="" ? 'pointer-events-none opacity-30' : ''}`}
                               >
                                 Edit User
                               </button>

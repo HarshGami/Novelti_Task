@@ -112,7 +112,7 @@ function ViewDeleteUser() {
                                     Mobile
                                   </dt>
                                   <dd className="mt-1 text-base leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                                    {userData.mobile}
+                                    {userData.mobileCode} {userData.mobile}
                                   </dd>
                                 </div>
 
