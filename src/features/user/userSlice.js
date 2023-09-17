@@ -1,7 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  users: JSON.parse(localStorage.getItem("users")) || [],
+  users: JSON.parse(localStorage.getItem("users")) || [{
+    firstName:"Harsh",
+    lastName:"Gami",
+    email:"harshgami09876@gmail.com",
+    mobile:"9323717109",
+    address1: "01, ram nivas society, palanpur",
+    pinCode: "385001",
+    id:0,
+    mobileCode: "IN",
+    state: {name: "Gujarat", code: "IN"},
+    country: {name: "India", code: "IN"},
+  }],
 };
 
 export const userSlice = createSlice({
