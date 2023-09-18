@@ -3,15 +3,16 @@ import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useSelector, useDispatch } from "react-redux";
-import { setView, setRemoveUser } from "../features/screen/screenSlice";
-import { deleteUser } from "../features/user/userSlice";
+import {
+  setView,
+  setRemoveUser,
+  setDeleteNotification,
+} from "../features/screen/screenSlice";
 
 function ViewDeleteUser() {
   const userData = useSelector((state) => state.screen.userData);
   const view = useSelector((state) => state.screen.view);
-
   const [open, setOpen] = useState(true);
-
   const dispatch = useDispatch();
 
   const close = () => {
@@ -22,8 +23,7 @@ function ViewDeleteUser() {
 
   const deleteExited = (e) => {
     e.preventDefault();
-    dispatch(deleteUser(userData));
-    close();
+    dispatch(setDeleteNotification(true));
   };
 
   return (

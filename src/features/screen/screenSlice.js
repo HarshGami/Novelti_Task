@@ -5,6 +5,8 @@ const initialState = {
   edit: false,
   removeUser: false,
   create: false,
+  deleteNotification: false,
+  createEditNotification: false,
   userData: {},
 };
 
@@ -28,10 +30,23 @@ export const creenSlice = createSlice({
     setUserData: (state, action) => {
       state.userData = action.payload;
     },
+    setDeleteNotification: (state, action) => {
+      state.deleteNotification = action.payload;
+    },
+    setCreateEditNotification: (state, action) => {
+      state.createEditNotification = action.payload;
+    },
   },
 });
 
-export const { setCreate, setRemoveUser, setEdit, setView, setUserData } =
-  creenSlice.actions;
+export const {
+  setCreate,
+  setRemoveUser,
+  setEdit,
+  setView,
+  setUserData,
+  setDeleteNotification,
+  setCreateEditNotification,
+} = creenSlice.actions;
 
 export default creenSlice.reducer;

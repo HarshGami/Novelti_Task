@@ -4,7 +4,11 @@ import { Dialog, Transition, Combobox } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useSelector, useDispatch } from "react-redux";
 import { createNew, editUser } from "../features/user/userSlice";
-import { setCreate, setEdit } from "../features/screen/screenSlice";
+import {
+  setCreate,
+  setEdit,
+  setCreateEditNotification,
+} from "../features/screen/screenSlice";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Country, State } from "country-state-city";
 
@@ -82,7 +86,8 @@ function CreateEditUser() {
         mobileCode,
       })
     );
-    close();
+    dispatch(setCreateEditNotification(true));
+    setOpen(false);
   };
 
   const editExited = (e) => {
@@ -95,7 +100,8 @@ function CreateEditUser() {
         mobileCode,
       })
     );
-    close();
+    dispatch(setCreateEditNotification(true));
+    setOpen(false);
   };
 
   return (
