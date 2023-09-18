@@ -22,11 +22,11 @@ function App() {
   return (
     <>
       <NavBar />
+      {deleteNotification ? <DeleteNotification /> : null}
+      {createEditNotification ? <CreateEditNotification /> : null}
       <ListUsers />
       {edit || create ? <CreateEditUser /> : null}
       {view || removeUser ? <ViewDeleteUser /> : null}
-      {deleteNotification ? <DeleteNotification /> : null}
-      {createEditNotification ? <CreateEditNotification /> : null}
     </>
   );
 }
